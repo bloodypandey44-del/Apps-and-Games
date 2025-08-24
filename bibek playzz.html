@@ -1,0 +1,150 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalika Store – Play Store Style</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ✅ Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1365277664945939"
+     crossorigin="anonymous"></script>
+
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: linear-gradient(135deg, #e3f2fd, #90caf9);  /* ✅ Background gradient */
+      margin: 0; padding: 0; 
+    }
+    header { 
+      background: #1eb7e5; 
+      color: white; 
+      padding: 15px; 
+      text-align: center; 
+      font-size: 24px;
+      font-weight: bold;
+    }
+    main { 
+      max-width: 1000px; 
+      margin: 20px auto; 
+      padding: 20px; 
+      background: white; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    }
+    .search-box { 
+      display: flex; gap: 10px; margin-bottom: 20px; 
+    }
+    .search-box input { 
+      flex: 1; padding: 12px; font-size: 16px; 
+      border-radius: 5px; border: 1px solid #ccc; 
+    }
+    .search-box button { 
+      padding: 12px 20px; font-size: 16px; border: none; 
+      border-radius: 5px; cursor: pointer; 
+      background: #1e88e5; color: white; 
+    }
+    .results { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+      gap: 15px; 
+    }
+    .card { 
+      background: #fafafa; 
+      border: 1px solid #ddd; 
+      padding: 15px; 
+      border-radius: 10px; 
+      text-align: center; 
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: scale(1.05); }
+    .card img { 
+      width: 100px; height: 100px; 
+      border-radius: 20px; 
+      margin-bottom: 10px; 
+    }
+    .card h3 { font-size: 16px; margin: 10px 0 5px; }
+    .card p { font-size: 14px; color: #666; }
+    .links a { 
+      display: inline-block; 
+      margin-top: 10px; 
+      padding: 8px 12px; 
+      font-size: 14px; 
+      text-decoration: none; 
+      border-radius: 5px; 
+    }
+    .ios { background: #000; color: white; }
+    .android { background: #3DDC84; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    🎮 Kalika Store
+  </header>
+  <main>
+    <div class="search-box">
+      <input type="text" id="query" placeholder="Search for apps (e.g., Free Fire, WhatsApp)">
+      <button onclick="searchGames()">Search</button>
+    </div>
+
+    <!-- ✅ Example AdSense ad placement -->
+    <ins class="adsbygoogle"
+         style="display:block; text-align:center;"
+         data-ad-client="ca-pub-1365277664945939"
+         data-ad-slot="1234567890"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
+    <div id="results" class="results"></div>
+  </main>
+
+  <script>
+    async function searchGames() {
+      const query = document.getElementById("query").value.trim();
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "<p>🔍 Searching...</p>";
+
+      let output = "";
+
+      // iTunes API for app icons and info
+      try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=software&limit=12`);
+        const data = await res.json();
+
+        data.results.forEach(app => {
+          output += `
+            <div class="card">
+              <img src="${app.artworkUrl100}" alt="${app.trackName}">
+              <h3>${app.trackName}</h3>
+              <p>${app.sellerName || app.artistName}</p>
+              <div class="links">
+                <a class="ios" href="${app.trackViewUrl}" target="_blank">iOS</a>
+                <a class="android" href="https://play.google.com/store/search?q=${encodeURIComponent(app.trackName)}&c=apps" target="_blank">Play Store</a>
+              </div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        console.error("iTunes fetch error", err);
+      }
+
+      // Google Play search fallback
+      if (query) {
+        output += `
+          <div class="card">
+            <h3>Search on Google Play</h3>
+            <p>Click below to view "${query}" on Play Store.</p>
+            <div class="links">
+              <a class="android" href="https://play.google.com/store/search?q=${encodeURIComponent(query)}&c=apps" target="_blank">Open in Play Store</a>
+            </div>
+          </div>
+        `;
+      }
+
+      resultsDiv.innerHTML = output || "<p>No results found.</p>";
+    }
+  </script>
+</body>
+</html>
